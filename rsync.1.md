@@ -397,6 +397,7 @@ detailed description below for a complete description.
 --delete-during          receiver deletes during the transfer
 --delete-delay           find deletions during, delete after
 --delete-after           receiver deletes after transfer, not during
+--delete-older=TIME      delete only files older than TIME
 --delete-excluded        also delete excluded files from dest dirs
 --ignore-missing-args    ignore missing source args without error
 --delete-missing-args    delete missing source args from destination
@@ -1704,6 +1705,13 @@ your home directory (remove the '=' for that).
     requires rsync to scan all the files in the transfer into memory at once
     (see `--recursive`). See `--delete` (which is implied) for more details on
     file-deletion.
+
+0.  `--delete-older=TIME`
+
+    This prevents files being deleted on the destination that were created or
+    modified after the given Posix timestamp.  The timestamp is given in
+    seconds since the Epoch.  This option implies deletion in the first place,
+    and may be combined with other deletion options.
 
 0.  `--delete-excluded`
 
