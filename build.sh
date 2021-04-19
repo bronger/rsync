@@ -7,7 +7,7 @@ cd "$SCRIPTPATH"
 
 if [ ! -e config.status ]
 then
-    ./configure --disable-md2man
+    ./configure
 fi
 make -j
 sudo make install
