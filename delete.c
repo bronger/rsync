@@ -28,7 +28,6 @@ extern int max_delete;
 extern char *backup_dir;
 extern char *backup_suffix;
 extern int backup_suffix_len;
-extern int keep_dirlinks;
 extern int del_older_timestamp;
 extern struct stats stats;
 
