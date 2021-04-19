@@ -28,6 +28,8 @@ extern int max_delete;
 extern char *backup_dir;
 extern char *backup_suffix;
 extern int backup_suffix_len;
+extern int keep_dirlinks;
+extern int del_older_timestamp;
 extern struct stats stats;
 
 int ignore_perishable = 0;
@@ -131,11 +133,22 @@ enum delret delete_item(char *fbuf, uint16 mode, uint16 flags)
 {
 	enum delret ret;
 	char *what;
+	STRUCT_STAT st;
 	int ok;
 
 	if (DEBUG_GTE(DEL, 2)) {
 		rprintf(FINFO, "delete_item(%s) mode=%o flags=%d\n",
 			fbuf, (int)mode, (int)flags);
+	}
+
+	if (del_older_timestamp) {
+		if (link_stat(fbuf, &st, 0) < 0) {
+			rsyserr(FERROR_XFER, errno, "stat %s failed",
+				full_fname(fbuf));
+			return DR_FAILURE;
+		}
+		if (st.st_mtime >= del_older_timestamp)
+			return DR_SUCCESS;
 	}
 
 	if (flags & DEL_NO_UID_WRITE)

@@ -130,6 +130,7 @@ int32 block_size = 0;
 time_t stop_at_utime = 0;
 char *skip_compress = NULL;
 char *copy_as = NULL;
+int del_older_timestamp = 0;
 item_list dparam_list = EMPTY_ITEM_LIST;
 
 /** Network address family. **/
@@ -767,6 +768,7 @@ static struct poptOption long_options[] = {
   {"bwlimit",          0,  POPT_ARG_STRING, &bwlimit_arg, OPT_BWLIMIT, 0, 0 },
   {"no-bwlimit",       0,  POPT_ARG_VAL,    &bwlimit, 0, 0, 0 },
   {"backup",          'b', POPT_ARG_VAL,    &make_backups, 1, 0, 0 },
+  {"delete-older",     0,  POPT_ARG_INT,    &del_older_timestamp, 0, 0, 0 },
   {"no-backup",        0,  POPT_ARG_VAL,    &make_backups, 0, 0, 0 },
   {"backup-dir",       0,  POPT_ARG_STRING, &backup_dir, 0, 0, 0 },
   {"suffix",           0,  POPT_ARG_STRING, &backup_suffix, 0, 0, 0 },
@@ -2128,7 +2130,7 @@ int parse_arguments(int *argc_p, const char ***argv_p)
 			"You may not combine multiple --delete-WHEN options.\n");
 		return 0;
 	}
-	if (delete_before || delete_during || delete_after)
+	if (delete_before || delete_during || delete_after || del_older_timestamp)
 		delete_mode = 1;
 	else if (delete_mode || delete_excluded) {
 		/* Only choose now between before & during if one is refused. */
@@ -2750,6 +2752,11 @@ void server_options(char **args, int *argc_p)
 			args[ac++] = "--delete-after";
 		else if (delete_mode && !delete_excluded)
 			args[ac++] = "--delete";
+		if (del_older_timestamp) {
+			if (asprintf(&arg, "--delete-older=%d", del_older_timestamp) < 0)
+				goto oom;
+			args[ac++] = arg;
+		}
 		if (delete_excluded)
 			args[ac++] = "--delete-excluded";
 		if (force_delete)
