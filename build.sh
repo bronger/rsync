@@ -7,7 +7,7 @@ cd "$SCRIPTPATH"
 
 if [ ! -e config.status ]
 then
-    ./configure
+    ./configure --disable-debug
 fi
 make -j
 sudo make install
