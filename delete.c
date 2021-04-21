@@ -140,7 +140,7 @@ enum delret delete_item(char *fbuf, uint16 mode, uint16 flags)
 			fbuf, (int)mode, (int)flags);
 	}
 
-	if (del_older_timestamp) {
+	if (!S_ISDIR(mode) && del_older_timestamp) {
 		if (link_stat(fbuf, &st, 0) < 0) {
 			rsyserr(FERROR_XFER, errno, "stat %s failed",
 				full_fname(fbuf));
